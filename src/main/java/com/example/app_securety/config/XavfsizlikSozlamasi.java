@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sun.security.util.Password;
 
 @Configuration
 @EnableWebSecurity
@@ -22,12 +21,13 @@ public class XavfsizlikSozlamasi extends WebSecurityConfigurerAdapter{
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .inMemoryAuthentication()
-                .withUser("director").password(passwordEncoder().encode("director")).roles("DIRECTOR")
+                .withUser("director1").password(passwordEncoder().encode("director1")).roles("DIRECTOR").authorities("READ_ALL_PRODUCT","ADD_PRODUCT","EDIT_PRODUCT","DELETE_PRODUCT","READ_ONE_PRODUCT")
+                .and()
+                .withUser("director2").password(passwordEncoder().encode("director2")).roles("DIRECTOR").authorities("READ_ALL_PRODUCT","ADD_PRODUCT","EDIT_PRODUCT","READ_ONE_PRODUCT")
                 .and()
                 .withUser("manager").password(passwordEncoder().encode("manager")).roles("MANAGER")
                 .and()
                 .withUser("user").password(passwordEncoder().encode("user")).roles("USER");
-
     }
 
     @Override
@@ -37,7 +37,8 @@ public class XavfsizlikSozlamasi extends WebSecurityConfigurerAdapter{
                 .authorizeRequests()
 //                .antMatchers(HttpMethod.GET,"/api/product/**").hasAnyRole("USER","DIRECTOR","MANAGER")
 //                .antMatchers(HttpMethod.GET,"/api/product").hasRole("USER")
-//                .antMatchers("/api/product/**").hasRole("DIRECTOR")
+//                .antMatchers(HttpMethod.DELETE,"/api/product/*").hasAuthority("DELETE_PRODUCT")
+//                .antMatchers("/api/product/**").hasAnyAuthority("READ_ALL_PRODUCT","ADD_PRODUCT","EDIT_PRODUCT","READ_ONE_PRODUCT")
                 .anyRequest()
                 .authenticated()
                 .and()

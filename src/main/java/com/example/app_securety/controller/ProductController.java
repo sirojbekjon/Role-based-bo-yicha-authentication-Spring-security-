@@ -18,14 +18,14 @@ public class ProductController {
     ProductRepository productRepository;
 
     //MANAGER,DIRECTOR
-    @PreAuthorize(value = "hasAnyRole('MANAGER','DIRECTOR')")
+    @PreAuthorize(value = "hasAuthority('READ_ALL_PRODUCT')")
     @GetMapping
     public HttpEntity<?> getProduct(){
         return ResponseEntity.ok(productRepository.findAll());
     }
 
     //DIRECTOR
-    @PreAuthorize(value = "hasAnyRole('DIRECTOR')")
+    @PreAuthorize(value = "hasAuthority('ADD_PRODUCT')")
     @PostMapping
     public HttpEntity<?> addProduct(@RequestBody Product product){
         Product save = productRepository.save(product);
@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     //DIRECTOR
-    @PreAuthorize(value = "hasAnyRole('DIRECTOR')")
+    @PreAuthorize(value = "hasAuthority('EDIT_PRODUCT')")
     @PutMapping("/{id}")
     public HttpEntity<?> editProduct(@PathVariable Integer id,@RequestBody Product product){
         Optional<Product> optionalProduct = productRepository.findById(id);
@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     //DIRECTOR
-    @PreAuthorize(value = "hasAnyRole('DIRECTOR')")
+    @PreAuthorize(value = "hasAuthority('DELETE_PRODUCT')")
     @DeleteMapping({"/{id}"})
     public HttpEntity<?> deleteProduct(@PathVariable Integer id){
         productRepository.deleteById(id);
@@ -56,11 +56,13 @@ public class ProductController {
     }
 
     //USER,MANAGER,DIRECTOR
-    @PreAuthorize(value = "hasAnyRole('MANAGER','DIRECTOR','USER')")
+    @PreAuthorize(value = "hasAuthority('READ_ONE_PRODUCT')")
     @GetMapping("/{id}")
     public HttpEntity<?> getProductById(@PathVariable Integer id){
         Optional<Product> productOptional = productRepository.findById(id);
         return ResponseEntity.status(productOptional.isPresent()?200:404).body(productOptional.orElse(null));
     }
+
+
 
 }
